@@ -77,6 +77,18 @@ class Cache
         return $default;
     }
 
+    public function StoreAll($data)
+    {
+        // we need to accept only associative arrays here... to be fair we could just accept arrays
+        // if it is; then we simple "merge" it into our existing data array, let it overwrite keys
+        if(!is_array($data)){
+            throw new CacheException();
+        }
+
+        $this->_cacheData = array_merge($this->_cacheData,$data);
+        $this->Save();
+    }
+
     public function GetAll()
     {
         //if it has not been loaded, try to load it

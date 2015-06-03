@@ -4,48 +4,9 @@ namespace Method\Common\Cache;
 class CacheManager 
 {
 
-    /* 
-        General gist for this lib is to cache data to the local file system
-        and allow retrieval 
-
-        Features:
-            
+    /* in theory this could allow you to manage multiple cache's, but I am unsure the best vector of use
     */
 
 
 
-    public function Init()
-    {
-
-    }
-
-    public function Store()
-    {
-
-    }
-
-    public function Get()
-    {
-
-    }
-
-    public function GetAll()
-    {
-
-    }
-
-    public function Clear()
-    {
-
-    }
-
-    public function Remove()
-    {
-
-    }
-
-    public function Load()
-    {
-
-    }
 }
