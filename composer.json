@@ -1,0 +1,16 @@
+{
+    "name": "method-es/php-common",
+    "description": "Some simple self contained helper libraries and conventions",
+    "authors": [
+        {
+            "name": "Keaton Johnstone (Method-es)",
+            "email": "method@methodweb.net"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Method\\Common\\": "src/"
+        }
+    }
+}
