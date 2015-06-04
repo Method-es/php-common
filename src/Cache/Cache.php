@@ -27,6 +27,8 @@ class Cache
     private $_cacheExtension = ".cache";
     private $_cachePath = "cache/";
 
+    private $_cacheExpiry = 0;
+
     private $_cacheMode = self::CACHE_JSON;
 
     private $_cacheData = [];
@@ -35,13 +37,13 @@ class Cache
 
     private $_cacheChanged = false;
 
-    public function __construct($cacheName = false, $cachePath = false, $cacheExt = false, $cacheMode = false)
+    public function __construct($cacheName = false, $cachePath = false, $cacheExt = false, $cacheMode = false, $cacheExpiry = false)
     {
-        $this->Init($cacheName, $cachePath, $cacheExt, $cacheMode);
+        $this->Init($cacheName, $cachePath, $cacheExt, $cacheMode, $cacheExpiry);
         $this->Clear();
     }
 
-    public function Init($cacheName = false, $cachePath = false, $cacheExt = false, $cacheMode = false)
+    public function Init($cacheName = false, $cachePath = false, $cacheExt = false, $cacheMode = false, $cacheExpiry = false)
     {
         if(!empty($cacheName))
             $this->_cacheName = $cacheName;
@@ -51,6 +53,8 @@ class Cache
             $this->_cacheExtension = $cacheExt;
         if(!empty($cacheMode))
             $this->_cacheMode = $cacheMode;
+        if(!empty($cacheExpiry))
+            $this->_cacheExpiry = $cacheExpiry;
     }
 
     public function Store($key,$value)
@@ -117,6 +121,23 @@ class Cache
         $this->Save();
     }
 
+    public function Destroy()
+    {
+        $this->Clear();
+        $this->_RemoveCache();
+    }
+
+    private function _RemoveCache()
+    {
+        $filename = $this->GetCacheLocation();
+        if(file_exists($filename)){
+            unlink($filename);
+            $this->_cacheLoaded = false;
+            $this->_cacheChanged = false;
+            $this->_cacheModTime = null;
+        }
+    }
+
     public function IsCachable()
     {
         return is_writable($this->_cachePath);
@@ -131,7 +152,7 @@ class Cache
         if($this->_cacheMode == self::CACHE_SERIALIZE){
             return serialize($this->_cacheData);
         }else if($this->_cacheMode == self::CACHE_JSON){
-            return json_encode($this->_cacheData);
+            return json_encode($this->_cacheData,JSON_PRETTY_PRINT);
         }
         throw new CacheException();
     }
@@ -175,7 +196,7 @@ class Cache
         if(file_exists($filename) && is_writable($filename) ||
             is_writable($this->_cachePath)){
             //we CAN save this
-            file_put_contents($filename, $this->_StoreData());
+            file_put_contents($filename, $this->_StoreData(), LOCK_EX);
             $this->_cacheLoaded = true;
             clearstatcache(TRUE,$filename);
             $this->_cacheModTime = filemtime($filename);
@@ -194,10 +215,23 @@ class Cache
             //it's there!
             //try to load it!
             $modTime = filemtime($filename);
+
+            //check expiry first
+            if($this->_cacheExpiry > 0 && $modTime < (time() - $this->_cacheExpiry)){
+                $this->_RemoveCache();
+                return;
+            }
+
             $data = file_get_contents($filename);
             if($data !== false){
                 //we got data!
                 $data = $this->_LoadData($data);
+                if($data === false){
+                    //we couldn't load the data (corrupt or unparsible with the current mode)
+                    // TODO: potentially try to laod it with the other mode; then we can tell them 
+                    //       they need to clear the cache before changing modes
+                    return;
+                }
                 $this->_cacheData = $data;
                 $this->_cacheModTime = $modTime;
                 $this->_cacheLoaded = true;

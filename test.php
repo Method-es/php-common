@@ -19,7 +19,7 @@ function TestCache(){
     // 3. Check the remove works
     // 4. Check the clear works
 
-    $cacheOne = new Cache("cacheOne");
+    $cacheOne = new Cache("cacheOne",false,false,false,10);
     $cacheTwo = new Cache("cacheTwo");
 
     $cacheOneFile = $cacheOne->GetCacheLocation();
@@ -57,7 +57,7 @@ function TestCache(){
     $cacheTwo->Store('data_two',2.2);
     echo "Data Stored.\n<br />\n<br />";
 
-    echo "Caches Loaded:\n<br />";
+    echo "Caches Cachable:\n<br />";
     echo "<pre>\n";
     var_dump($cacheOne->IsCachable(),$cacheTwo->IsCachable());
     echo "</pre>\n";
