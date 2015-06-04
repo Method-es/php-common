@@ -86,6 +86,7 @@ class Cache
         }
 
         $this->_cacheData = array_merge($this->_cacheData,$data);
+        $this->_cacheChanged = true;
         $this->Save();
     }
 
@@ -200,6 +201,7 @@ class Cache
                 $this->_cacheData = $data;
                 $this->_cacheModTime = $modTime;
                 $this->_cacheLoaded = true;
+                $this->_cacheChanged = false;
             }
         }
     }
