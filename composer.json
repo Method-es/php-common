@@ -7,10 +7,20 @@
             "email": "method@methodweb.net"
         }
     ],
-    "require": {},
+    "require": {
+
+    },
+    "require-dev": {
+        "phpunit/phpunit": "5.0.*"
+        },
     "autoload": {
         "psr-4": {
             "Method\\Common\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": { 
+            "Method\\Common\\Test\\": "tests/" 
         }
     }
 }
