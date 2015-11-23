@@ -1,0 +1,8 @@
+{
+    "test-key": {
+        "host": "host2",
+        "username": "user2",
+        "password": "pass2",
+        "name": "name2"
+    }
+}

@@ -3,6 +3,8 @@ namespace Method\Common\Config;
 
 
 use Method\Common\DB;
+use Exception;
+use RuntimeException;
 /**
  * MysqlDB class eats this for breakfast.
  *
@@ -28,7 +30,7 @@ class DBConfig extends JSONConfig implements DB\Config
     {
         $this->CheckConfigState();
         if(empty($key) || !is_string($key)){
-            throw new Exception('Invalid JSON Key provided');
+            throw new RuntimeException('Invalid JSON Key provided');
         }
         $this->JSONKey = $key;
     }
@@ -49,7 +51,7 @@ class DBConfig extends JSONConfig implements DB\Config
 
         foreach($requiredKeys as $key){
             if(!property_exists($dbConfig, $key)){
-                throw new Exception("Unable to locate the required database key '{$key} in the provided database config");
+                throw new Exception("Unable to locate the required database key '{$key}' in the provided database config");
             }
         }
 

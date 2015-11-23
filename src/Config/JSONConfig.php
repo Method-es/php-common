@@ -60,9 +60,14 @@ class JSONConfig
         return clone $this->_config;
     }
 
+    protected function IsLoaded()
+    {
+        return !empty($this->_config);
+    }
+
     protected function CheckConfigState()
     {
-        if(!empty($this->_config)){
+        if($this->IsLoaded()){
             throw new RuntimeException('Config has already been loaded; please use a new instance to load another config');
         }
     }
