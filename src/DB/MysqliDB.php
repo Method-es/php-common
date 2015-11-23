@@ -4,7 +4,7 @@ namespace Method\Common\DB;
 use mysqli;
 use Exception;
 
-class MysqlDB
+class MysqliDB
 {
     protected $mysqli;
     public $QueryCount = 0;
@@ -14,9 +14,9 @@ class MysqlDB
 
     public function __construct(Config $config)
     {
-        if(empty($config->GetHost()) || empty($config->GetUsername()) || empty($config->GetPassword()) || empty($config->GetName())) {
-            throw new Exception('Missing or empty database credentials');
-        }
+        // if(empty($config->GetHost()) || empty($config->GetUsername()) || empty($config->GetPassword()) || empty($config->GetName())) {
+        //     throw new Exception('Missing or empty database credentials');
+        // }
         $this->_config = $config;
 
         $this->mysqli = new mysqli(

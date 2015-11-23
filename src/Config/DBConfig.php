@@ -22,8 +22,8 @@ class DBConfig extends JSONConfig implements DB\Config
 
     public function __construct($location = "", $jsonKey = "database")
     {
+        $this->SetJSONKey($jsonKey);
         parent::__construct($location);
-        $this->JSONKey = $jsonKey;
     }
 
     public function SetJSONKey($key)
