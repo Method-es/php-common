@@ -13,8 +13,9 @@ trait QuickBuilder
 		{
 			foreach ($data as $key => $value) 
 			{
-				if(property_exists($this, $key))
-					$this->$key = $value;
+				if(property_exists($this, $key)){
+					$this->SetProperty($key, $value);
+				}
 			}
 		}
 	}
