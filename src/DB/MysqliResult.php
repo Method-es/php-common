@@ -59,6 +59,45 @@ class MysqliResult implements Iterator
 
     }
 
+    public function fetchAll($classname = null, $params = null)
+    {
+        if($this->resultType == self::RESULT_TYPE_OBJECT){
+            return $this->fetchAllObject($classname, $params);
+        }else if($this->resultType == self::RESULT_TYPE_ARRAY){
+            return $this->fetchAllArray();
+        }
+        throw new Exception(self::UNSUPPORTED_RESULT_TYPE);
+    }
+
+    public function fetchAllObject($classname = null, $params = null)
+    {
+        $this->rewind();
+        $this->result->data_seek($this->cursorPosition);
+
+        $data = [];
+
+        while($row = $this->fetchObject($classname, $params)){
+            $data[] = $row;
+        }
+
+        return $data;
+
+    }
+
+    public function fetchAllArray()
+    {
+        $this->rewind();
+        $this->result->data_seek($this->cursorPosition);
+
+        $data = [];
+
+        while($row = $this->fetchArray()){
+            $data[] = $row;
+        }
+
+        return $data;
+    }
+
     public function current()
     {
         $this->result->data_seek($this->cursorPosition);
@@ -83,6 +122,14 @@ class MysqliResult implements Iterator
     public function rewind()
     {
         $this->cursorPosition = 0;
+    }
+
+    /**
+     * @param string $resultType
+     */
+    public function setResultType($resultType)
+    {
+        $this->resultType = $resultType;
     }
 
 
