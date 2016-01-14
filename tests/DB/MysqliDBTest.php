@@ -23,5 +23,29 @@ class MysqliDBTest extends PHPUnit_Framework_TestCase
         $example = new MysqliDB($dbConfig);
     }
 
+    public function testDBQuery()
+    {
+        $dbConfig = new DBConfig('tests/data/MysqliDBTest1.json');
+
+        $example = new MysqliDB($dbConfig);
+
+        $query = "SELECT * FROM `test`";
+
+        $result = $example->Query($query);
+
+    }
+
+    public function testDBQueryFailure()
+    {
+        $this->setExpectedException('Exception');
+        $dbConfig = new DBConfig('tests/data/MysqliDBTest1.json');
+
+        $example = new MysqliDB($dbConfig);
+
+        $query = "SELECT * FROM `not_a_real_table`";
+
+        $result = $example->Query($query);
+
+    }
 
 }

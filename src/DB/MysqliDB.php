@@ -3,10 +3,12 @@ namespace Method\Common\DB;
 
 use mysqli;
 use Exception;
+use mysqli_result;
 
 class MysqliDB
 {
     protected $mysqli;
+
     public $QueryCount = 0;
     public $QueryLog = [];
 
@@ -20,10 +22,10 @@ class MysqliDB
         $this->_config = $config;
 
         $this->mysqli = new mysqli(
-                            $this->_config->GetHost(), 
-                            $this->_config->GetUsername(), 
-                            $this->_config->GetPassword(), 
-                            $this->_config->GetName() );
+            $this->_config->GetHost(),
+            $this->_config->GetUsername(),
+            $this->_config->GetPassword(),
+            $this->_config->GetName());
     }
 
     public function Query($query)
@@ -31,19 +33,37 @@ class MysqliDB
         $result = $this->mysqli->query($query);
         $this->QueryCount++;
         $this->QueryLog[] = $query;
-        if($result instanceof mysqli_result)
-            return $result->fetch_object();
-        return $result;
+        if ($result instanceof mysqli_result) {
+            return new MysqliResult($result);
+        }
+
+        if ($result === true) {
+            if ($this->LastInsertID() > 0) {
+                return $this->LastInsertID();
+            }
+            if ($this->AffectedRows() > 0) {
+                return $this->AffectedRows();
+            }
+            return true;
+        }
+
+        throw new QueryException($query, $this->GetLastError());
     }
 
-    public function LastInsertID() {
+    public function LastInsertID()
+    {
         return $this->mysqli->insert_id;
+    }
+
+    public function AffectedRows()
+    {
+        return $this->mysqli->affected_rows;
     }
 
     public static function Rows($result)
     {
         $rows = [];
-        while($row = $result->fetch_assoc())
+        while ($row = $result->fetch_assoc())
             $rows[] = $row;
         $result->free_result();
         return $rows;
@@ -52,5 +72,10 @@ class MysqliDB
     public function GetLastError()
     {
         return $this->mysqli->error;
+    }
+
+    public function getMysqli()
+    {
+        return $this->mysqli;
     }
 }
