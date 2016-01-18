@@ -32,6 +32,11 @@ class MysqliResult implements Iterator
         mysqli_free_result($this->result);
     }
 
+    public function numRows():int
+    {
+        return (int)$this->numRows;
+    }
+
     public function fetch($className = null, $params = null)
     {
         if($this->resultType == self::RESULT_TYPE_OBJECT){
