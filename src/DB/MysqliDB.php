@@ -5,6 +5,11 @@ use mysqli;
 use Exception;
 use mysqli_result;
 
+/**
+ * Class MysqliDB
+ * @package Method\Common\DB
+ * @property mysqli $mysqli
+ */
 class MysqliDB
 {
     protected $mysqli;
@@ -21,11 +26,29 @@ class MysqliDB
         // }
         $this->_config = $config;
 
+        $this->connect();
+    }
+
+    protected function connect()
+    {
         $this->mysqli = new mysqli(
             $this->_config->GetHost(),
             $this->_config->GetUsername(),
             $this->_config->GetPassword(),
             $this->_config->GetName());
+    }
+
+    public function Ping()
+    {
+        return $this->mysqli->ping();
+    }
+
+    public function Reconnect($force = false)
+    {
+        if(!$force && $this->Ping())
+            return; //already connected
+
+        $this->connect();
     }
 
     public function Query($query)
