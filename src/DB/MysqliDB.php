@@ -17,14 +17,18 @@ class MysqliDB
     public $QueryCount = 0;
     public $QueryLog = [];
 
+    protected $QueryLogEnabled = false;
+
     protected $_config;
 
-    public function __construct(Config $config)
+    public function __construct(Config $config, $enableQueryLog = false)
     {
         // if(empty($config->GetHost()) || empty($config->GetUsername()) || empty($config->GetPassword()) || empty($config->GetName())) {
         //     throw new Exception('Missing or empty database credentials');
         // }
         $this->_config = $config;
+
+        $this->QueryLogEnabled = $enableQueryLog;
 
         $this->connect();
     }
@@ -55,7 +59,10 @@ class MysqliDB
     {
         $result = $this->mysqli->query($query);
         $this->QueryCount++;
-        $this->QueryLog[] = $query;
+
+        if($this->QueryLogEnabled)
+            $this->QueryLog[] = $query;
+
         if ($result instanceof mysqli_result) {
             return new MysqliResult($result);
         }
@@ -90,6 +97,31 @@ class MysqliDB
             $rows[] = $row;
         $result->free_result();
         return $rows;
+    }
+
+    public function enableQueryLog()
+    {
+        $this->QueryLogEnabled = true;
+    }
+
+    public function disableQueryLog()
+    {
+        $this->QueryLogEnabled = false;
+    }
+
+    public function isQueryLogEnabled()
+    {
+        return (bool)$this->QueryLogEnabled;
+    }
+
+    public function GetQueryLog()
+    {
+        return $this->QueryLog;
+    }
+
+    public function ClearQueryLog()
+    {
+        $this->QueryLog = [];
     }
 
     public function GetLastError()
