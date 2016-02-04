@@ -129,6 +129,11 @@ class MysqliResult implements Iterator
         $this->cursorPosition = 0;
     }
 
+    public function free()
+    {
+        $this->result->free();
+    }
+
     /**
      * @param string $resultType
      */
