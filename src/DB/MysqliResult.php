@@ -21,6 +21,8 @@ class MysqliResult implements Iterator
 
     protected $resultType = self::RESULT_TYPE_OBJECT;
 
+    protected $freed = false;
+
     public function __construct(mysqli_result $result)
     {
         $this->result = $result;
@@ -29,7 +31,7 @@ class MysqliResult implements Iterator
 
     public function __destruct()
     {
-        mysqli_free_result($this->result);
+        $this->free();
     }
 
     public function numRows():int
@@ -131,7 +133,15 @@ class MysqliResult implements Iterator
 
     public function free()
     {
-        $this->result->free();
+        if(!$this->freed) {
+            $this->result->free();
+        }
+        $this->freed = true;
+    }
+
+    public function getResult()
+    {
+        return $this->result;
     }
 
     /**
