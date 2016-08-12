@@ -131,7 +131,7 @@ class Cache
     {
         $filename = $this->GetCacheLocation();
         if(file_exists($filename)){
-            unlink($filename);
+            @unlink($filename);
             $this->_cacheLoaded = false;
             $this->_cacheChanged = false;
             $this->_cacheModTime = null;
