@@ -102,10 +102,10 @@
             }
         });
         
-        <? if($obj->ID == 0){ ?>
+        <?php if($obj->ID == 0){ ?>
         objForm.AddCallback(function(object){
             window.location = '<?=base_url('Obj/Editor');?>/' + object.ID;
         });
-        <? } ?>
+        <?php } ?>
     });
 </script>

@@ -33,7 +33,9 @@ class MysqliDBTest extends PHPUnit_Framework_TestCase
 
         $result = $example->Query($query);
 
-        $data = $result->fetchAll();
+        //$data = $result->fetchAll();
+
+        $result->free();
 
     }
 

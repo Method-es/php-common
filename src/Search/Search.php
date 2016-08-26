@@ -3,16 +3,18 @@
 namespace Method\Common\Search;
 
 use Exception;
+use Method\Common\Interfaces\WhereQueryBuilder;
 
-class Search
+class Search implements WhereQueryBuilder
 {
 	public $Offset = 0;
 	public $Limit = 0;
 	public $Keyword = "";
 	public $OrderBy = "ID";
 	public $OrderDir = "ASC";
-	Public $GroupBy = "";
+	public $GroupBy = "";
 	public $IDs = [];
+	public $ExcludedIDs = [];
 
 	const ORDER_COUNT_MISMATCH = "Provided Order Bys and Order Dirs are mismatched";
 
@@ -30,7 +32,7 @@ class Search
 			$orders = [];
 			
 			if($isDirArray && count($this->OrderDir) != count($this->OrderBy)){
-				throw new Eception(self::ORDER_COUNT_MISMATCH);
+				throw new Exception(self::ORDER_COUNT_MISMATCH);
 			}
 			for($i=0;$i<count($this->OrderBy);$i++){
 				$order = $this->OrderBy[$i];
@@ -43,7 +45,7 @@ class Search
 			}
 			$orderBy = implode(", ", $orders);
 		}else if($isDirArray){
-			throw new Eception(self::ORDER_COUNT_MISMATCH); // more dirs then bys which makes no sense
+			throw new Exception(self::ORDER_COUNT_MISMATCH); // more dirs then bys which makes no sense
 		}else{
 			$orderBy = "`{$table}`.`{$this->OrderBy}` {$this->OrderDir}";
 		}
@@ -80,7 +82,10 @@ class Search
 				$where = " WHERE `{$table}`.`{$keywordField}` LIKE {$like}";	
 		}
 		if(!empty($this->IDs)){
-			$where .= " AND `{$table}`.`ID` IN (".implode(',', $this->IDs).")";
+			$where .= " AND `{$table}`.`ID` {$this->GetComparator($this->IDs)}";
+		}
+		if(!empty($this->ExcludedIDs)){
+			$where .= " AND `{$table}`.`ID` {$this->GetComparator($this->ExcludedIDs, TRUE)}";
 		}
 		return $where;
 	}
@@ -111,19 +116,26 @@ class Search
 		return "";
 	}
 
-	protected function GetComparator($value)
+	protected function GetComparator($value, $not = FALSE)
     {
     	$db = GetController()->db;
+    	$equals = "=";
+    	if($not)
+    		$equals = "!=";
         if(is_array($value)){
         	array_walk($value, function(&$item,$idx,$db){
         		$item = $db->escape($item);
         	},$db);
-        	if(count($value) > 1)
-            	return "IN(".implode(",", $value).")";
+        	if(count($value) > 1){
+        		$in = "IN";
+        		if($not)
+        			$in = "NOT IN";
+            	return "{$in}(".implode(",", $value).")";
+        	}
             reset($value);
-            return "= ".current($value);
+            return "{$equals} ".current($value);
         }else{
-            return "= {$db->escape($value)}";
+            return "{$equals} {$db->escape($value)}";
         }
     }
 }

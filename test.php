@@ -1,6 +1,31 @@
 <?php
 
+use Method\Common\Config\DBConfig;
+use Method\Common\DB\MysqliDB;
+
 require_once('vendor/autoload.php');
+
+
+$dbConfig = new DBConfig('tests/data/MysqliDBTest1.json');
+
+$example = new MysqliDB($dbConfig);
+
+/* @var mysqli $db */
+//$db = $example->getMysqli();
+
+$query = "SELECT * FROM `test`";
+
+$result = $example->Query($query);
+//$result = $db->query($query);
+
+//$res = $result->getResult();
+//$res->free();
+
+//$result = $example->Query($query);
+
+//$result->free();
+
+
 
 //this file's sole purpose is to test all things within; comment or uncomment that which you don't want to test...
 
@@ -87,16 +112,16 @@ require_once('vendor/autoload.php');
 
 
 
-
-use Method\Common\Remote\Server;
-// use Method\Config\JSONConfig;
-
-
-
-$testServer = new Server();
-$testServer->SetUsername('codeserver');
-$testServer->SetHost('codeserver');
-$testServer->SetPassword('none');
-$testServer->Connect();
-$result = $testServer->Run('ls -al');
-var_dump($result);
+//
+//use Method\Common\Remote\Server;
+//// use Method\Config\JSONConfig;
+//
+//
+//
+//$testServer = new Server();
+//$testServer->SetUsername('codeserver');
+//$testServer->SetHost('codeserver');
+//$testServer->SetPassword('none');
+//$testServer->Connect();
+//$result = $testServer->Run('ls -al');
+//var_dump($result);

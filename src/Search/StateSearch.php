@@ -7,8 +7,14 @@ class StateSearch extends Search
 
 	protected function _GetInnerWhere($table, $keywordField)
 	{
-		$where = parent::_GetInnerWhere($table, $keywordField);
-		return $where . " AND `{$table}`.`State` IN('".implode("','", $this->AllowedStates)."')";
+		$wheres = [];
+		$wheres[] = parent::_GetInnerWhere($table, $keywordField);
+
+		if(!empty($this->AllowedStates)){
+			$wheres[] = "`{$table}`.`State` {$this->GetComparator($this->AllowedStates)}";
+		}
+
+		return implode(" AND ", $wheres);
 	}
 
 }

@@ -10,6 +10,6 @@
             </tr>
         </thead>
         <tbody>
-        <?= $this->load->view('Objs/rows-list.php',['objs'=>$objs],true); ?>
+        <?= $this->load->view('Obj/table-list-rows',['Objs'=>$Objs],true); ?>
         </tbody>
     </table>

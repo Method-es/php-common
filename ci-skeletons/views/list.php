@@ -23,6 +23,10 @@
     </div>
     
     <?= 
+
+        //by default this always uses the table listing;
+        //if you would like other listing views, either replace this with the call, 
+        // or if you are doing a mixed mode implementation, ensure to add the additional views you are mixing modes with
         $this->load->view('Objs/table-list.php',['objs'=>$objs],true); 
     ?>
 
@@ -41,7 +45,7 @@ $(document).ready(function(){
         ItemsPerPage: <?= Obj::DEFAULT_LIMIT; ?>,
         TotalPages: <?= ceil($totalObjs / Obj::DEFAULT_LIMIT); ?>,
         PostDrawCallback: function(self){
-             $(self.Target).listOptions([
+            $(self.Target).listOptions([
                 {
                     name: 'edit',
                     fullRow: true
@@ -64,6 +68,10 @@ $(document).ready(function(){
                     }
                 }
             ]);
+        },
+        HistoryPopStateCallback: function(state){
+            //ensure to handle the case in which state is null (reset items all to default)
+            //you should always assume if it's not explictly set within state, then return it to the default
         }
     }, 'objPaginator');
     
