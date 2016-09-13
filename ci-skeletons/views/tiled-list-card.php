@@ -1,1 +1,0 @@
-<?= $this->load->view('Obj/card-content', ['Obj'=>$Obj], true) ?>
